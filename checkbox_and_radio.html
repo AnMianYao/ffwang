@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>style of checkbox and radio</title>
+    <style>
+        #demo1,#demo2{
+            width: 300px;
+            margin: 100px auto;
+            display: flex;
+            position: relative;
+            justify-content: space-around;
+            color: white;
+            border-radius: 10px;
+        }
+        #demo1{
+            background-color: #487b7d;
+        }
+        #demo2{
+            background-color: #424496;
+        }
+        #demo1 label ,#demo2 label{
+            display: inline-block;
+            margin: 20px 0px;
+        }
+        #demo1 input,#demo2 input{
+            display:none;
+            width: 15px;
+            height: 15px;
+        }
+        #demo1 .checkbox_form label::before,  #demo1 .radio_form label::before {
+            content: "";
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: #EEE;
+            margin: 0 15px;
+            vertical-align: middle;
+            box-sizing: border-box;
+        }
+        #demo1 .radio_form label::before{
+            border-radius: 50%;
+
+        }
+        #demo1 input:checked+ #demo1 label::before{
+            background-color: rgb(53, 183, 111);
+            border: 3px #EEEEEE solid;
+        }
+        #demo1 label.checked::before{
+            background-color: rgb(53, 183, 111);
+            border: 3px #EEEEEE solid;
+        }
+
+        #demo2 .img {
+            display: inline-block;
+            background:url("img/checkbox&radio.png") ;
+            width:20px;
+            height: 20px;
+        }
+        #demo2 .checkbox_form .unchecked{
+            background-position: 30% 90%;
+        }
+        #demo2 .radio_form .img{
+            background-position: 30% 20%;
+        }
+        #demo2 .radio_form input:checked+div.img{
+            background-position: 73% 20%;
+        }
+        #demo2 .checkbox_form input:checked+div.img{
+            background-position: 73% 100%;
+        }
+
+    </style>
+</head>
+<body>
+<div id="demo1">
+<!--::before -->
+    <form class="checkbox_form">
+        <input type="checkbox"  id="checkbox1" class="checkbox"><label for="checkbox1"> checkbox1</label>
+        <input type="checkbox"  id="checkbox2" class="checkbox"><label for="checkbox2">checkbox2</label>
+        <input type="checkbox"  id="checkbox3" class="checkbox"><label for="checkbox3">checkbox3 </label>
+    </form>
+
+    <form class="radio_form">
+        <input type="radio"  id="radio1" name="radio" class="radio"><label for="radio1">radio1</label>
+        <input type="radio"  id="radio2" name="radio" class="radio"><label for="radio2">radio2</label>
+        <input type="radio"  id="radio3" name="radio" class="radio"> <label for="radio3">radio3 </label>
+    </form>
+
+</div>
+
+<div id="demo2">
+<!-- background-position-->
+    <form class="checkbox_form">
+       <input type="checkbox"  id="checkbox4" class="checkbox"> <div class="img unchecked"></div> <label for="checkbox4"> checkbox4 </label></br>
+        <input type="checkbox"  id="checkbox5" class="checkbox"><div class="img unchecked"></div><label for="checkbox5">checkbox5</label></br>
+       <input type="checkbox"  id="checkbox6" class="checkbox"> <div class="img unchecked"></div><label for="checkbox5">checkbox6 </label></br>
+    </form>
+
+    <form class="radio_form">
+        <input type="radio"  id="radio4" name="radio" class="radio"> <div class="img"></div><label for="radio4">radio4</label></br>
+        <input type="radio"  id="radio5" name="radio" class="radio"><div class="img"></div><label for="radio5">radio5</label></br>
+        <input type="radio"  id="radio6" name="radio" class="radio"><div class="img"></div><label for="radio6">radio6</label></br>
+    </form>
+
+</div>
+</body>
+<script>
+    (function () {
+
+        var demo1_container=document.querySelector("#demo1");
+        var checkbox1=demo1_container.querySelectorAll(".checkbox");
+        var radio1=demo1_container.querySelectorAll(".radio");
+
+        demo1_container.onclick=function (event) {
+            var event=event||window.event;
+            var target=event.target||event.srcElement;
+            if(target.nodeName.toUpperCase()=="INPUT"){
+                switch (target.type){
+                    case "checkbox":
+                        [].forEach.call(checkbox1,function (obj) {
+                            if (obj.checked){
+                                obj.nextElementSibling.classList.add("checked");
+                            }else {
+                                obj.nextElementSibling.classList.remove("checked");
+                            }
+                        });
+                        break;
+                    case "radio":
+                        [].forEach.call(radio1,function (obj) {
+                            if (obj.checked){
+                                obj.nextElementSibling.classList.add("checked");
+                            }else {
+                                obj.nextElementSibling.classList.remove("checked");
+                            }
+                        });
+                        break;
+                    default:
+                        return false;
+
+                }
+            }
+
+
+
+
+        };
+
+        var demo2_container=document.querySelector("#demo2");
+        var img=document.querySelectorAll(".img");
+        var radios=demo2_container.querySelectorAll(".radio");
+        demo2_container.onclick=function (event) {
+            var event=event||window.event;
+            var target=event.target||event.srcElement;
+            var type=target.previousElementSibling.getAttribute("class");
+            switch (type){
+                case "checkbox":
+                    if (target.classList.contains("unchecked")){
+                        target.style.backgroundPosition="73% 90%";
+                        target.classList.remove("unchecked");
+                    }else {
+                        target.classList.add("unchecked");
+                        target.style.backgroundPosition="30% 90%";
+                    }
+                    break;
+                case "radio":
+                    [].forEach.call(radios,function (obj) {
+                        obj.nextElementSibling.style.backgroundPosition="30% 20%";
+                    });
+                    target.style.backgroundPosition="73% 20%";
+                    break;
+                default:
+                    return false;
+            }
+        }
+    })()
+</script>
+</html>
