@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>contextmenu</title>
+    <style>
+        *{
+            padding: 0px;
+            margin: 0px;
+        }
+        #contextmenu{
+            width: 500px;
+            height: 100px;
+            margin: 50px auto;
+            background-color: #487b7d;
+            color: white;
+            text-align: center;
+            line-height: 100px;
+            font-size: 40px;
+        }
+        #show {
+            width: 300px;
+            position: absolute;
+            background-color:  cadetblue;
+        }
+        #show ul li{
+            display: block;
+            list-style: none;
+            font-size: 20px;
+            padding: 10px 20px;
+            color: #EEEEEE;
+        }
+        #show ul li:hover{
+            color: #061f3e;
+        }
+        .hide{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="contextmenu">Right-Click</div>
+
+<div id="show" class="hide">
+    <ul>
+        <li>menu item one</li>
+        <li>menu item two</li>
+        <li>menu item three</li>
+    </ul>
+</div>
+</body>
+<script>
+    (function () {
+        var right_click_div=document.querySelector("#contextmenu");
+        var menu=document.querySelector("#show");
+        function show(event) {
+            var event=event||window.event;
+            var target=event.target||event.srcElement;
+            /***取消默认事件*/
+            if (event.preventDefault){
+                event.preventDefault();
+            }else {
+                event.returnValue=false;
+            }
+
+
+            if (target==right_click_div && event.type=="contextmenu"){
+                menu.classList.remove("hide");
+            }
+            if (target==right_click_div && event.type=="click" ||target!=right_click_div){
+                menu.classList.add("hide");
+            }
+
+            var mouse_x=event.pageX;
+            var mouse_y=event.pageY;
+            var client_width=document.documentElement.clientWidth||document.body.clientWidth;
+            var menu_width=menu.clientWidth;/**放在menu元素显示之后*/
+
+            menu.style.left=client_width-mouse_x<menu_width?mouse_x-menu_width+"px":mouse_x+"px";
+            menu.style.top=mouse_y+"px";
+        }
+
+        document.body.addEventListener("contextmenu",show,false);
+        document.body.addEventListener("click",show,false);
+    })()
+</script>
+</html>
