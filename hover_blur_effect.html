@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>hover_blur_effect</title>
+    <style>
+        *{
+            padding: 0px;
+            margin: 0px;
+        }
+        body{
+            background-color: rgba(34, 34, 34, 0.97);
+        }
+        #container{
+            width: 304px;
+            height: 200px;
+            margin: 100px auto;
+            position: relative;
+            box-sizing: border-box;
+            border:  10px solid #ffffff;
+            transition: filter 1s linear;
+            -webkit-transition:filter 1s linear ;
+            -o-transition: filter 1s linear;
+            -moz-transition: filter 1s linear;
+        }
+        #container:hover img{
+            filter: blur(3px);
+            -webkit-filter: blur(3px);
+
+        }
+        span.line{
+            position: absolute;
+            transition: 0.5s ease;
+            -webkit-transition: 0.5s ease;
+            -o-transition: 0.5s ease;
+            -moz-transition: 0.5s ease;
+        }
+        #container:hover .line{
+            background: white;
+        }
+        span.top_left{
+            left: 50%;
+            top:20px;
+            width: 0px;
+            height: 2px;
+        }
+        #container:hover .top_left{
+            width: 60%;
+            left: 20px;
+        }
+        span.top_right{
+            right: 50%;
+            top: 20px;
+            width: 0px;
+            height: 2px;
+        }
+        #container:hover .top_right{
+            width: 60%;
+           right: 20px;
+        }
+        span.bottom_left{
+            bottom: 20px;
+            left: 50%;
+            width: 0px;
+            height: 2px;
+        }
+        #container:hover .bottom_left{
+            width: 60%;
+            left: 20px;
+        }
+        span.bottom_right{
+            bottom: 20px;
+            right: 50%;
+            width: 0px;
+            height: 2px;
+        }
+        #container:hover .bottom_right{
+            width: 60%;
+            right: 20px;
+        }
+        span.left_top{
+            top: 50%;
+            left: 20px;
+            height: 0px;
+            width: 2px;
+        }
+        #container:hover .left_top{
+            height: 50%;
+            top: 20px;
+        }
+        span.left_bottom{
+            bottom: 50%;
+            left: 20px;
+            height: 0px;
+            width: 2px;
+        }
+        #container:hover .left_bottom{
+            height: 50%;
+            bottom: 20px;
+        }
+
+        span.right_top{
+            top: 50%;
+            right: 20px;
+            height: 0px;
+            width: 2px;
+        }
+        #container:hover .right_top{
+            height: 50%;
+            top: 20px;
+        }
+        span.right_bottom{
+            bottom: 50%;
+            right: 20px;
+            height: 0px;
+            width: 2px;
+        }
+        #container:hover .right_bottom{
+            height: 50%;
+            bottom: 20px;
+        }
+        #string{
+            width: 300px;
+            height:100px;
+            position: absolute;
+            left: 2px;
+            top: 50px;
+            display: none;
+            text-align: center;
+            line-height: 100px;
+            background:#4513ff -webkit-linear-gradient(left, #7146af, #ffd518) 0 0 no-repeat;
+            background:#4513ff -o-linear-gradient(left, #7146af, #ffd518) 0 0 no-repeat;
+            background:#4513ff -moz-linear-gradient(left, #7146af, #ffd518) 0 0 no-repeat;
+            background:#4513ff linear-gradient(left, #7146af, #ffd518) 0 0 no-repeat;
+            -webkit-background-size: 50% 100%;
+            -o-background-size: 50% 100%;
+            -moz-background-size: 50% 100%;
+            background-size: 50% 100%;
+            color: transparent;
+            -webkit-background-clip: text;
+
+            font-weight:bold;
+            animation: liuguang 2s linear infinite;
+            -webkit-animation: liuguang 2s linear infinite;
+            -o-animation: liuguang 2s linear infinite;
+            -moz-animation: liuguang 2s linear infinite;
+        }
+        @-webkit-keyframes liuguang
+        {
+            0%
+            {
+                background-position: top left;
+            }
+            100%
+            {
+                background-position: bottom right;
+            }
+        }
+        #container:hover #string{
+            display: block;
+        }
+
+
+
+    </style>
+</head>
+<body>
+
+<div id="container">
+    <img src="img/images.jpg">
+    <div id="string">The cute duck is slepping!</div>
+
+    <span class="line top_left"></span>
+    <span class="line top_right"></span>
+    <span class="line left_top"></span>
+    <span class="line left_bottom"></span>
+    <span class="line right_top"></span>
+    <span class="line right_bottom"></span>
+    <span class="line bottom_left"></span>
+    <span class="line bottom_right"></span>
+</div>
+
+</body>
+</html>
