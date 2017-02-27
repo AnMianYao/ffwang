@@ -22,31 +22,26 @@
     function isObject(data) {
         return Object.prototype.toString.call(data)==="[object Object]";
     }
-
     Observer.prototype.walk=function (obj) {
-       if (isObject(obj)){
-           {
-               for (let  key in obj ){
-                   if (obj.hasOwnProperty(key)){
-                       var value=obj[key];
+            {
+                for (let  key in obj ){
+                    if (obj.hasOwnProperty(key)){
+                        var value=obj[key];
+                        if (isObject(value)){
+                            new Observer(value);
+                        }
+                        if (isArray(value)){
+                            obj[key]=new FakeArray(value);
+                        }
+                        this.convert(key,value);
+                    }
+                }
+            }
 
-                       if (isObject(value)){
-                           new Observer(value);
-                       }
-                       if (isArray(value)){
-                           obj[key]=new FakeArray(value);
-                       }
-
-                       this.convert(key,value);
-                   }
-               }
-           }
-
-       }
     };
     Observer.prototype.convert=function (key,value) {
         var self=this;
-        if (isObject(this.data.key)){
+        if (isObject(this.data)){
             Object.defineProperty(this.data,key,{
                 enumerable:true,
                 configurable:true,
@@ -70,9 +65,7 @@
                 }
             })
         }
-
     };
-
     FakeArray.prototype=[];
     FakeArray.prototype.constructor=FakeArray;
     FakeArray.prototype.push=function () {
@@ -103,8 +96,6 @@
         console.log("采用reverse方法被改变了");
         return Array.prototype.reverse.call(this.array,arguments);
     };
-
-
     let data = {
         user: {
             name: "ffwang",
@@ -115,11 +106,7 @@
         },
         array:[1,2,3]
     };
-
     let app = new Observer(data);
     console.log(app);
-
-
-
 </script>
 </html>
