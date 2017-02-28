@@ -53,6 +53,7 @@
                     });
                     //console.log("你访问了"+self+"属性"+key);
                     self.emit(key);
+                    self.off(key);
                     return value;
 
                 },
@@ -73,6 +74,7 @@
                    // console.log("你设置了"+self+"属性"+key);
                    // console.log("新的"+key+"="+value);
                     self.emit(key);
+                    self.off(key);
                 }
             })
     };
@@ -91,6 +93,13 @@
             self.handlers[eventType][i].apply(self,handlers);
         }
         return self;
+    };
+    Observer.prototype.off=function (eventType) {
+        if (!(eventType in this.handlers)){
+            return;
+        }
+        delete this.handlers[eventType];
+        return this;
     };
     FakeArray.prototype=[];
     FakeArray.prototype.constructor=FakeArray;
