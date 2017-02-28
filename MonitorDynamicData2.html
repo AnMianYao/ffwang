@@ -2,9 +2,137 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>$Title$</title>
+    <title>MonitorDynamicData2</title>
 </head>
 <body>
-$END$
+
 </body>
+<script>
+    function Observer(data) {
+        this.data=data;
+        this.handlers={};
+        this.walk(data);
+    }
+    function FakeArray(array) {
+        Array.call(this,arguments);
+        this.array=array;
+    }
+    function isArray(data) {
+        return Object.prototype.toString.call(data)==="[object Array]";
+    }
+    function isObject(data) {
+        return Object.prototype.toString.call(data)==="[object Object]";
+    }
+    Observer.prototype.walk=function (obj) {
+        {
+            for (let  key in obj ){
+                if (obj.hasOwnProperty(key)){
+                    var value=obj[key];
+                    if (isObject(value)){
+                        new Observer(value);
+                    }
+                    if (isArray(value)){
+                        obj[key]=new FakeArray(value);
+                    }
+                    this.convert(key,value);
+                }
+            }
+        }
+
+    };
+    Observer.prototype.convert=function (key,value) {
+        var self=this;
+
+            Object.defineProperty(this.data,key,{
+                enumerable:true,
+                configurable:true,
+                get:function () {
+
+                    self.on(key,function () {
+                        console.log("你访问了"+self+"属性"+key+": "+value)
+                    });
+                    //console.log("你访问了"+self+"属性"+key);
+                    self.emit(key);
+                    return value;
+
+                },
+                set:function (newValue) {
+                    self.on(key,function () {
+                        console.log("你改变了"+self+"属性，"+key+"新的值为： "+value)
+                    });
+                    if (newValue===value){
+                        return;
+                    }
+                    if (typeof  newValue=="object"){
+                        newValue=new  Observer(newValue);
+                    }
+                    if (isArray(newValue)){
+                        newValue=new  FakeArray(newValue);
+                    }
+                    value=newValue;
+                   // console.log("你设置了"+self+"属性"+key);
+                   // console.log("新的"+key+"="+value);
+                    self.emit(key);
+                }
+            })
+    };
+    Observer.prototype.on=function (eventType,handler) {
+      var self=this;
+        if (!(eventType in self.handlers)){
+            self.handlers[eventType] = [];
+        }
+        this.handlers[eventType].push(handler);
+        return this;
+    };
+    Observer.prototype.emit=function (eventType) {
+        var self=this;
+        var handlers=Array.prototype.slice.call(arguments,1);
+        for (var i=0;i<self.handlers[eventType].length;i++){
+            self.handlers[eventType][i].apply(self,handlers);
+        }
+        return self;
+    };
+    FakeArray.prototype=[];
+    FakeArray.prototype.constructor=FakeArray;
+    FakeArray.prototype.push=function () {
+        console.log("采用push方法被改变了");
+        return Array.prototype.push.call(this.array,arguments);
+    };
+    FakeArray.prototype.pop=function () {
+        console.log("采用pop方法被改变了");
+        return Array.prototype.pop.call(this.array,arguments);
+    };
+    FakeArray.prototype.shift=function () {
+        console.log("采用shift方法被改变了");
+        return Array.prototype.shift.call(this.array,arguments);
+    };
+    FakeArray.prototype.unshift=function () {
+        console.log("采用unshift方法被改变了");
+        return Array.prototype.unshift.call(this.array,arguments);
+    };
+    FakeArray.prototype.splice=function () {
+        console.log("采用splice方法被改变了");
+        return Array.prototype.splice.call(this.array,arguments);
+    };
+    FakeArray.prototype.sort=function () {
+        console.log("采用sort方法被改变了");
+        return Array.prototype.sort.call(this.array,arguments);
+    };
+    FakeArray.prototype.reverse=function () {
+        console.log("采用reverse方法被改变了");
+        return Array.prototype.reverse.call(this.array,arguments);
+    };
+    let data = {
+        user: {
+            name: "ffwang",
+            age: "25"
+        },
+        address: {
+            city: "beijing"
+        },
+        array:[1,2,3]
+    };
+    let app = new Observer(data);
+    console.log(app);
+</script>
 </html>
