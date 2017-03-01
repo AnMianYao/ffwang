@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>loading</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <style>
+        div.container{
+            width: 200px;
+            height: 200px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-top: -100px;
+            margin-left: -100px;
+        }
+        div.circle{
+            position: absolute;
+            border-radius:100% ;
+            box-sizing: border-box;
+            left: 50%;
+            top: 50%;
+        }
+        div.out{
+            width: 0px;
+            height: 0px;
+            border-radius:75px;
+            margin-left: -75px;
+            margin-top: -75px;
+            border: 75px solid salmon;
+            border-top-color: transparent;
+            animation: Rotate_out 1s linear infinite;
+
+        }
+        div.in{
+            width: 140px;
+            height: 140px;
+            margin-left: -70px;
+            margin-top: -70px;
+            background-color: #ffffff;
+        }
+        div.solid{
+            width: 100px;
+            height: 100px;
+            margin-left: -50px;
+            margin-top: -50px;
+            position: relative;
+
+        }
+
+        div.light{
+            background-color: #FFABAE;
+        }
+        div.dark{
+            background-color:  salmon;
+        }
+        div.half{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 100px;
+            height: 100px;
+            border-radius: 100px;
+        }
+        div.solid div.half:nth-child(1){
+            clip-path: polygon(0% 0%,50% 0%,50% 100%,0% 100%);
+            animation: Rotate_in_left 2s linear infinite ;
+        }
+        div.solid div.half:nth-child(2){
+             clip-path: polygon(0% 0%,50% 0%,50% 100%,0% 100%);
+             z-index: 6;
+         }
+        div.solid div.half:nth-child(3){
+            clip-path: polygon(50% 0%,100% 0%,100% 100%,50% 100%);
+            visibility: hidden;
+            animation: Rotate_in_right 2s linear infinite ;
+
+        }
+
+        @keyframes Rotate_out {
+            0%{
+                transform:rotate(0deg);
+                -ms-transform:rotate(0deg);
+                -moz-transform:rotate(0deg);
+                -webkit-transform:rotate(0deg);
+                -o-transform:rotate(0deg);
+            }
+            25%{
+                transform:rotate(90deg);
+                -ms-transform:rotate(90deg);
+                -moz-transform:rotate(90deg);
+                -webkit-transform:rotate(90deg);
+                -o-transform:rotate(90deg);
+            }
+            50%{
+                transform:rotate(180deg);
+                -ms-transform:rotate(180deg);
+                -moz-transform:rotate(180deg);
+                -webkit-transform:rotate(180deg);
+                -o-transform:rotate(180deg);
+            }
+            75%{
+                transform:rotate(270deg);
+                -ms-transform:rotate(270deg);
+                -moz-transform:rotate(270deg);
+                -webkit-transform:rotate(270deg);
+                -o-transform:rotate(270deg);
+            }
+            100%{
+                transform:rotate(360deg);
+                -ms-transform:rotate(360deg);
+                -moz-transform:rotate(360deg);
+                -webkit-transform:rotate(360deg);
+                -o-transform:rotate(360deg);
+            }
+        }
+
+        @keyframes Rotate_in_left {
+            0%{
+                transform:rotate(0deg);
+                -ms-transform:rotate(0deg);
+                -moz-transform:rotate(0deg);
+                -webkit-transform:rotate(0deg);
+                -o-transform:rotate(0deg);
+
+            }
+            50%{
+                transform:rotate(180deg);
+                -ms-transform:rotate(180deg);
+                -moz-transform:rotate(180deg);
+                -webkit-transform:rotate(180deg);
+                -o-transform:rotate(180deg);
+
+            }
+
+            100%{
+                transform:rotate(360deg);
+                -ms-transform:rotate(360deg);
+                -moz-transform:rotate(360deg);
+                -webkit-transform:rotate(360deg);
+                z-index: 99;            }
+
+        }
+        @keyframes Rotate_in_right {
+            0%{
+                visibility: hidden;
+
+            }
+            50%{
+                visibility: hidden;
+
+            }
+            100%{
+                visibility: visible;
+
+            }
+
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="circle out">
+        <div class="circle in"></div>
+    </div>
+    <div class=" circle solid light">
+        <div class="circle half dark"></div>
+        <div class="circle half light"></div>
+        <div class="circle half dark"></div>
+
+    </div>
+
+</div>
+</body>
+</html>
