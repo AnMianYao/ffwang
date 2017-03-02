@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>css 3d</title>
+    <style>
+        #container{
+            width: 700px;
+            margin: 200px auto;
+            position: relative;
+            transform-style: preserve-3d;
+            perspective-origin: center center;
+            animation: run 20s ease-in infinite;
+
+        }
+        img.box{
+            display: block;
+            position: absolute;
+            width: 320px;
+            height: 180px;
+            left: 190px;
+            transform-origin:center center;
+        }
+        @-webkit-keyframes run {
+            0%{
+                transform: rotateY(0deg);
+            }
+            100%{
+                transform: rotateY(360deg);
+            }
+        }
+
+    </style>
+
+</head>
+<body>
+<div id="container">
+   <img src="img/CSS3D1.png" class="box">
+   <img src="img/CSS3D2.png" class="box">
+   <img src="img/CSS3D3.png" class="box">
+   <img src="img/CSS3D4.png" class="box">
+   <img src="img/CSS3D5.png" class="box">
+   <img src="img/CSS3D6.png" class="box">
+</div>
+<script>
+    (function () {
+        var container=document.querySelector("#container");
+        var imgs=container.querySelectorAll(".box");
+        var len=imgs.length;
+        imgs.forEach(function (item,index) {
+            item.style.transform="rotateY("+360/len * (index)+"deg) translateZ(500px)";
+        })
+    })()
+</script>
+</body>
+</html>
