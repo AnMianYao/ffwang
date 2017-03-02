@@ -9,8 +9,11 @@
             margin: 200px auto;
             position: relative;
             transform-style: preserve-3d;
+            -webkit-transform-style: preserve-3d;
             perspective-origin: center center;
+            -webkit-perspective-origin: center center;
             animation: run 20s ease-in infinite;
+            -webkit-animation: run 20s ease-in infinite;
 
         }
         img.box{
@@ -20,13 +23,16 @@
             height: 180px;
             left: 190px;
             transform-origin:center center;
+            -webkit-transform-origin: center center;
         }
         @-webkit-keyframes run {
             0%{
                 transform: rotateY(0deg);
+                -webkit-transform: rotateY(0deg);
             }
             100%{
                 transform: rotateY(360deg);
+                -webkit-transform: rotateY(360deg);
             }
         }
 
