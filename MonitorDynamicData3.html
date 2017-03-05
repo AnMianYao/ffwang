@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MonitorDynamicData3</title>
+</head>
+<body>
+
+</body>
+<script>
+    function Observer(data) {
+        this.data=data;
+        this.handlers={};
+        this.walk(data);
+    }
+
+
+    function isObject(data) {
+        return Object.prototype.toString.call(data)==="[object Object]";
+    }
+    Observer.prototype.walk=function (obj) {
+        {
+            for (let  key in obj ){
+                if (obj.hasOwnProperty(key)){
+                    var value=obj[key];
+                    if (isObject(value)){
+                        new Observer(value);
+                        value.parent=[];
+                        value.parent.unshift(obj,key);
+                    }
+
+                    this.convert(key,value);
+                }
+            }
+        }
+
+    };
+    Observer.prototype.convert=function (key,value) {
+        var self=this;
+
+        Object.defineProperty(this.data,key,{
+            enumerable:true,
+            configurable:true,
+            get:function () {
+
+                self.on("getter",function () {
+                    console.log("你访问了"+self+"属性"+key+": "+value)
+                });
+                self.emit("getter");
+                self.off("getter");
+                return value;
+
+            },
+            set:function (newValue) {
+                self.on("setter",function () {
+                    console.log("你改变了"+key+"新的值为： "+value)
+                });
+                var current=self.data.parent;
+                while (current){
+                    var str=current[1];
+                    (function (_str) {
+                        var fn=function () {
+                            console.log("你改变了"+_str+"属性");
+                        };
+                        self.on("setter",fn)
+                    })(str);
+
+                    current=current[0].parent;
+                }
+                if (newValue===value){
+                    return;
+                }
+                if (typeof  newValue=="object"){
+                    newValue=new  Observer(newValue);
+                }
+                value=newValue;
+                self.emit("setter");
+                self.off("setter");
+            }
+        })
+    };
+    Observer.prototype.on=function (eventType,handler) {
+        if (!(eventType in this.handlers)){
+            this.handlers[eventType] = [];
+        }
+        this.handlers[eventType].push(handler);
+    };
+    Observer.prototype.emit=function () {
+        var eventType=Array.prototype.shift.call(arguments);
+        var fns=this.handlers[eventType];
+
+        if (fns.length==0){
+            return;
+        }
+        for (var i=0;i<fns.length;i++){
+            fns[i].apply(this,arguments);
+        }
+    };
+    Observer.prototype.off=function () {
+        var eventType=Array.prototype.shift.call(arguments);
+        if (!(eventType in this.handlers)){
+            return;
+        }
+        delete this.handlers[eventType];
+    };
+
+    let data = {
+        user: {
+            name: {
+                firstName:"wang",
+                lastName:"ff"
+            },
+            age: "25"
+        },
+        address: {
+            city: "beijing"
+        }
+
+    };
+    let app = new Observer(data);
+    console.log(app);
+</script>
+</html>
