@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MonitorDynamicData4</title>
+</head>
+<body>
+
+</body>
+<script>
+    var Vue=function (obj) {
+        this.el=obj.el||null;
+        this.data=obj.data||null;
+        this.init();
+    };
+    Vue.prototype.init=function () {
+        var parent=this.createContainer();
+        var self=this;
+        var build=function (obj) {
+            for (var key in obj){
+                if (obj.hasOwnProperty(key)){
+                    var item=obj[key];
+                    if (self.isObj(item)){
+                        build(item);
+                    }else {
+                        self.createP(obj,key,parent);
+                    }
+                }
+            }
+        };
+        build(this.data)
+
+    };
+    Vue.prototype.createContainer=function () {
+        var div=document.createElement("div");
+        if (this.el!=null){
+            div.id=this.el;
+        }
+        document.body.appendChild(div);
+        return div;
+    };
+    Vue.prototype.createP=function (obj,key,parent) {
+        var p=document.createElement("p");
+        p.innerHTML=key+"："+obj[key];
+        parent.appendChild(p);
+
+    };
+    Vue.prototype.isObj=function (obj) {
+        return Object.prototype.toString.call(obj)==="[object Object]";
+    };
+
+    var data={
+        el: '#app',
+        data: {
+            user: {
+                name: 'youngwind',
+                age: 25
+            }
+        }
+    };
+   var app=new Vue(data);
+
+
+</script>
+</html>
