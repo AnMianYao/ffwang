@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MonitorDynamicData5</title>
+</head>
+<body>
+<div>
+    文本框绑定数据，旁侧显示数据；文本框改变输入，原始数据变动，旁侧文本变动；
+</div>
+<div id="app">
+    <input type="text" v-model="text">
+    {{text}}
+</div>
+</body>
+<script>
+    {
+        /**实现observer
+         * 数据变化通知watcher*/
+        function Observer(data) {
+            this.data=data;
+            this.walk(data);
+        }
+
+        function observe(value) {
+            if (!value ||  (Object.prototype.toString.call(value)!=="[object Object]")){
+                return;
+            }
+            return new Observer(value);
+        }
+        Observer.prototype={
+            walk:function (obj) {
+                var self=this;
+                var keys=Object.keys(obj);
+                keys.forEach(function (key) {
+                   self.convert(key,obj[key]);
+                })
+            },
+            convert:function (key,val) {
+                this.defineRective(this.data,key,val);
+            },
+            defineRective:function (obj,key,val) {
+                /**在监听数据的过程中，会为data中的每一个属性生成一个主题对象dep
+                 * 存放watcher的容器*/
+                var dep=new Dep();
+                var childObj=observe(val);
+
+                Object.defineProperty(obj,key,{
+                    enumerable: true,
+                    configurable: false,
+                    get:function () {
+                        /**wDep.target 是与watcher的桥梁，绑定在watcher实例的（this指向watcher）
+                         * watcher实例化直接调用get()方法，Dep.target指向watcher实例*/
+                        if (Dep.target){
+                            /**调用watcher实例的addDep(),dep.id是否存在于watcher的depIDS里？
+                             * 假如相应属性的dep.id已经在当前watcher的depIds里，说明不是一个新的属性，
+                             * 仅仅是改变了其值而已，则不需要将当前watcher添加到该属性的dep里，
+                             * 假如相应属性是新的属性，则将当前watcher添加到新属性的dep里*/
+                            dep.depend();
+                        }
+
+                        return val;
+                    },
+                    set:function (newValue) {
+                        if (newValue===val){
+                            return;
+                        }
+                        val=newValue;
+
+                        childObj=observe(newValue);
+                        /**通知订阅者*/
+                        dep.notify();
+                    }
+                })
+            }
+        }
+
+    }
+    {
+        /**Dep:
+         * 添加订阅者的类*/
+        var uid=0;
+        function Dep() {
+            this.id=uid++;
+            this.subs=[];
+        }
+        Dep.prototype={
+            addSub:function (sub) {
+                this.subs.push(sub);
+            },
+            /**与watcher联系的，添加watcher*/
+            depend:function () {
+                Dep.target.addDep(this);
+            },
+            notify:function () {
+                var subs=this.subs;
+                subs.forEach(function (item) {
+                    item.update();
+                })
+            },
+            removeSub:function (sub) {
+                var index=this.subs.indexOf(sub);
+                if (index!=-1){
+                    this.subs.splice(index,1);
+                }
+            }
+        };
+        Dep.target=null;
+    }
+
+    {
+        /**Compile:
+         * 主要作用是解析模板指令，
+         * 将模板的变量转换为数据，
+         * 然后初始化渲染页面，
+         * 并将每个指令对应的节点绑定更新函数，
+         * 添加监听数据的订阅者，
+         * 一旦数据变化，收到通知，更新视图
+         * 目前只实现v-model*/
+        function Compile(el,vm) {
+            this.$vm=vm;
+            this.$el=this.isElementNode(el)?el:document.querySelector(el);
+
+            if (this.$el){
+                this.$fragment=this.nodeFragment(this.$el);
+                this.init();
+                this.$el.appendChild(this.$fragment);
+            }
+        }
+
+        Compile.prototype={
+            /**节点el转换成文档碎片fragment进行解析编译操作,
+             * 解析完成，再将fragment添加回原来的真实dom节点中*/
+            nodeFragment:function (node) {
+                var fragment=document.createDocumentFragment();
+                var child;
+                while (child=node.firstChild){
+                    fragment.appendChild(child)
+                }
+                return fragment;
+            },
+            isElementNode:function (node) {
+                return node.nodeType==1;
+            },
+            isTextNode:function (node) {
+                return node.nodeType==3;
+            },
+            init:function () {
+                this.compileElement(this.$fragment);
+            },
+            compileElement:function (node) {
+                var childNodes=node.childNodes;
+                var self=this;
+
+                [].slice.call(childNodes).forEach(function (node) {
+                    /**元素节点  这个例子只是实现input*/
+                    if (self.isElementNode(node)){
+                        self.compile(node);
+                    }
+
+                    if (self.isTextNode(node)){
+                        var reg=/\{\{(.*)\}\}/;
+                        if (reg.test(node.nodeValue)){
+                            self.compileText(node,RegExp.$1);
+                        }
+                    }
+                    if(node.childNodes && node.childNodes.length){
+                        self.compileElement(node);
+                    }
+                })
+            },
+
+            compile:function (node) {
+                /**渲染元素节点啊
+                 * 这里为input文本框*/
+                var attrs=node.attributes;
+                var self=this;
+                [].slice.call(attrs).forEach(function (attr) {
+                    var attrName=attr.name;
+                    if (self.isDirective(attrName)){
+                        var exp=attr.nodeValue;
+                        var dir=attrName.substring(2);
+
+                        compileUtil[dir] && compileUtil[dir](node,self.$vm,exp);
+                    }
+                })
+            },
+            compileText:function (node,exp) {
+                /**文本节点*/
+                compileUtil.text(node,this.$vm,exp);
+            },
+            isDirective:function (attr) {
+                return attr.indexOf("v-")==0;
+            }
+        };
+        var compileUtil={
+
+            bind:function (node,vm,exp,dir) {
+                /**第一次初始化视图*/
+                var updateFn=update[dir+'Updater'];
+                /**实例化订阅者，此操作会在对应的属性消息订阅器中添加了该订阅者watcher*/
+
+                updateFn && updateFn(node,this._getVMVal(vm,exp));
+                new Watcher(vm,exp,function (_vm,value) {
+                    /**一旦属性值有变化，会收到通知执行此更新函数，更新视图*/
+                    updateFn && updateFn(node,value);
+                });
+            },
+            text:function (node,vm,exp) {
+                this.bind(node,vm,exp,"text");
+            },
+            model:function (node,vm,exp) {
+                this.bind(node,vm,exp,"model");
+                var self=this;
+                var val=this._getVMVal(vm,exp);
+                node.addEventListener("change",function (e) {
+                    var newVal=e.target.value;
+                    if (val==newVal){
+                        return;
+                    }
+
+                    self._setVNVal(vm,exp,newVal);
+                    val=newVal;
+                })
+            },
+            _getVMVal:function (vm,exp) {
+                var val=vm.$data;
+                exp=exp.split(".");
+                exp.forEach(function (key) {
+                    val=val[key];
+                });
+                return val;
+
+            },
+            _setVNVal:function (vm,exp,value) {
+                var val= vm.$data;
+                exp=exp.split(".");
+                exp.forEach(function (key,i) {
+                    if (i<exp.length-1){
+                        val=val[key];
+                    }else {
+                        val[key]=value;
+                    }
+                });
+
+            }
+        };
+
+        var update={
+            textUpdater:function (node,value) {
+                node.textContent=typeof value=="undefined"?"":value;
+            },
+            modelUpdater: function(node, value, oldValue) {
+                node.value = (typeof value == 'undefined') ? '' : value;
+            }
+        }
+    }
+    
+    {
+        function Watcher(vm,exp,cb) {
+            this.cb = cb;
+            this.vm = vm;
+            this.exp = exp;
+            this.depIds = {};
+            this.value = this.get();
+        }
+        Watcher.prototype={
+            update:function () {
+                this.run();
+            },
+            run:function () {
+                var value=this.get();
+                var oldVal=this.value;
+                if (value!==oldVal){
+                    this.value=value;
+                    this.cb(this.vm,value,oldVal);
+                }
+            },
+            addDep:function (dep) {
+                if (!this.depIds.hasOwnProperty(dep.id)) {
+                    dep.addSub(this);
+                    this.depIds[dep.id] = dep;
+                }
+            },
+            get:function () {
+                Dep.target=this;
+                var value=this.getVMVal();
+                Dep.target=null;
+                return value;
+            },
+            getVMVal: function() {
+                var exp = this.exp.split('.');
+                var val = this.vm.$data;
+                exp.forEach(function(k) {
+                    val = val[k];
+                });
+                return val;
+            }
+        }
+    }
+    {
+        function vue(option) {
+            this.$option=option;
+            var data=this.$data=this.$option.data;
+            /***监听数据变动*/
+            observe(data);
+            /**dom渲染*/
+            this.$compile=new Compile(option.el,this);
+        }
+
+    }
+
+
+    var app=new vue({
+        el:"#app",
+        data:{
+            text:"hello world"
+        }
+    });
+
+</script>
+</html>
