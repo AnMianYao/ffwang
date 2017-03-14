@@ -1,0 +1,111 @@
+.container{
+    width: 100%;
+    height: 800px;
+    margin: 0px auto;
+    overflow: scroll;
+}
+#markdownEditor{
+    position: relative;
+    width: 49%;
+    height: 100%;
+    float: left;
+    display: flex;
+    flex-flow: nowrap;
+}
+#textDisplayArea{
+    width: 49%;
+    height: 100%;
+    float: right;
+}
+
+#markdownEditor #rowsLine{
+    background-color: #2f3129;
+    width: 4%;
+    height: 100%;
+}
+
+#markdownEditor #editor{
+    display: block;
+    border: none;
+    background-color: #272822;
+    width: 96%;
+    color: white;
+    font-size: 12px;
+    line-height: 150%;
+   vertical-align: middle;
+    outline: none;
+}
+#rowsLine span.row{
+    display: block;
+    width: 100%;
+    color:white;
+    font-size: 12px;
+    line-height: 150%;
+    text-align: right;
+}
+#markdownEditor #highlight{
+    width: 100%;
+    height: 20px;
+    position: absolute;
+    display: flex;
+    flex-wrap: nowrap;
+    left: 0px;
+    opacity: 0.3;
+}
+#markdownEditor #highlight div:first-child{
+    width: 4%;
+    background-color: #000000;
+}
+#markdownEditor #highlight div:last-child{
+    width: 96%;
+    background-color: #5e6058;
+}
+
+#textDisplayArea{
+    font-size: 16px;
+    line-height: 200%;
+    margin-top: 10px;
+}
+#textDisplayArea h1,h2,h3,h4,h5,h6{
+    font-weight: bolder;
+}
+#textDisplayArea h1{
+    font-size: 2.2em;
+}
+#textDisplayArea h2{
+    font-size: 2em;
+}
+#textDisplayArea h3{
+    font-size: 1.8em;
+}
+#textDisplayArea h4{
+    font-size: 1.4em;
+}
+#textDisplayArea h5{
+    font-size: 1.2em;
+}
+#textDisplayArea h6{
+    font-size: 1.2em;
+}
+#textDisplayArea code{
+    display: block;
+    background-color: #272822;
+    color: white;
+    width: 90%;
+    max-height: 100px;
+    margin: 10px 0px ;
+    overflow: auto;
+}
+#textDisplayArea q{
+    display: block;
+    border-left: 5px solid #84867e;
+    padding-left: 10px;
+    background-color: #e4e6dc;
+    margin: 10px 0px ;
+}
+#textDisplayArea ul{
+    list-style: inside;
+}
+#textDisplayArea ol{
+    list-style: decimal inside;
+}
