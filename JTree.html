@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JTree</title>
+    <style>
+        .wrapped{
+            width: 70%;
+            margin: 20px auto;
+        }
+        div.tree{
+            display: block;
+            font-size: 18px;
+            line-height: 150%;
+            padding-left: 30px;
+            vertical-align: middle;
+            background: url("img/jtress_show.png") left 3px no-repeat;
+        }
+        div.hide_child{
+            background: url("img/jtress_hide.png") left 3px no-repeat;
+        }
+
+        span.leaf{
+            display: block;
+            font-size: 14px;
+            padding-left: 20px;
+            vertical-align: middle;
+        }
+        .wrapped .hide{
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+<div class="wrapped">
+</div>
+</body>
+<script>
+    (function () {
+        var nodes = [ {name: "父节点1", children: [ {name: "子节点1"}, {name: "子节点2"} ]}, {name: "父节点2", children: [ {name: "子节点3"}, {name: "子节点4", children:[ {name:"子节点5"} ]} ]} ];
+        function creatDiv(parent,content) {
+            /***创建文件夹*/
+            let div=document.createElement("div");
+            div.classList.add("tree");
+            div.classList.add("hide_child");
+            div.innerHTML=content;
+            parent.appendChild(div);
+            return div;
+        }
+
+        function createSpan(parent,content) {
+            /***创建文件*/
+            let span=document.createElement("span");
+            span.classList.add("leaf");
+            span.classList.add("hide");
+            span.innerHTML=content;
+            parent.appendChild(span);
+            return span;
+        }
+
+        function init(nodes,parent) {
+            for (let i in nodes){
+                var node=nodes[i];
+                if (node.children){
+                    /**子节点还有children属性*/
+                    let parent_node=creatDiv(parent,node.name || "default");
+                    init(node.children,parent_node)
+                }else {
+                    createSpan(parent,node.name || "default");
+                }
+            }
+        }
+
+        function click(e) {
+            var e=e||window.event;
+            var target=e.target||event.srcElement;
+            target.classList.toggle("hide_child");
+            var children=target.childNodes;
+
+            if (target.classList.contains("hide_child")){
+                for (let i in children){
+                    if (children[i].nodeType==1){
+                        children[i].classList.add("hide");
+                    }
+                }
+            }else {
+                for (let i in children){
+                    if (children[i].nodeType==1){
+                        children[i].classList.remove("hide");
+                    }
+                }
+            }
+
+        }
+        var parent=document.querySelector(".wrapped");
+        init(nodes,parent);
+        parent.addEventListener("click",click,false);
+    })()
+</script>
+</html>
